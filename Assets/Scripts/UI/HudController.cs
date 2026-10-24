@@ -3,7 +3,9 @@ using UnityEngine.UI;
 
 public class HudController : MonoBehaviour
 {
-    [SerializeField] private Image healthFill;
+    [SerializeField] private Image[] heartIcons;
+    [SerializeField] private Sprite heartFullSprite;
+    [SerializeField] private Sprite heartEmptySprite;
     [SerializeField] private Text currentScoreText;
     [SerializeField] private Text highScoreText;
 
@@ -29,7 +31,10 @@ public class HudController : MonoBehaviour
 
     private void OnLivesChanged(int lives, int maxLives)
     {
-        healthFill.fillAmount = maxLives > 0 ? (float)lives / maxLives : 0f;
+        for (int i = 0; i < heartIcons.Length; i++)
+        {
+            heartIcons[i].sprite = i < lives ? heartFullSprite : heartEmptySprite;
+        }
     }
 
     private void OnScoreChanged(int current, int high)
