@@ -5,13 +5,12 @@ public static class BuildObstaclePrefabs
 {
     private const string PrefabFolder = "Assets/Prefabs";
     private const float GroundTopY = 0f;
-    private const float CactusVisualScale = 0.52f;
-    private const float FlyingObstacleY = 1.3f;
+    private const float FlyingObstacleY = 1.35f;
 
-    // the pterodactyl art has empty padding below the visible silhouette
-    // within its frame, so the trigger is shrunk/offset to the actual
-    // visible wingspan instead of the full (padded) sprite rect
-    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(1f, 0.5f);
+    // the bird art has empty padding below the visible wingspan within its
+    // frame, so the trigger is shrunk/offset to the actual silhouette
+    // instead of the full (padded) sprite rect
+    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(1f, 0.4f);
     private static readonly Vector2 FlyingObstacleColliderOffset = new Vector2(0f, 0.15f);
 
     [MenuItem("Tools/Setup/Build Obstacle Prefabs")]
@@ -33,35 +32,54 @@ public static class BuildObstaclePrefabs
 
     private static void BuildGroundObstacle()
     {
-        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus.png");
-        if (sprite == null)
+        var variants = new[]
         {
-            Debug.LogError("VERIFY FAILED: cactus sprite not found");
-            return;
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus_medium.png"),
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus_tall_a.png"),
+            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus_tall_b.png"),
+        };
+        foreach (var variant in variants)
+        {
+            if (variant == null)
+            {
+                Debug.LogError("VERIFY FAILED: a cactus variant sprite is missing");
+                return;
+            }
         }
 
+        var defaultSprite = variants[1];
+
         var go = new GameObject("GroundObstacle");
-        go.transform.localScale = Vector3.one * CactusVisualScale;
-        float y = GroundTopY + sprite.bounds.extents.y * CactusVisualScale;
+        float y = GroundTopY + defaultSprite.bounds.extents.y;
         go.transform.position = new Vector3(0f, y, 0f);
 
         var spriteRenderer = go.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = sprite;
+        spriteRenderer.sprite = defaultSprite;
         spriteRenderer.sortingOrder = 5;
 
         var collider = go.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = sprite.bounds.size;
+        collider.size = defaultSprite.bounds.size;
 
-        go.AddComponent<GroundObstacle>();
+        var obstacle = go.AddComponent<GroundObstacle>();
+        var so = new SerializedObject(obstacle);
+        so.FindProperty("spriteRenderer").objectReferenceValue = spriteRenderer;
+        so.FindProperty("boxCollider").objectReferenceValue = collider;
+        var variantsProp = so.FindProperty("variants");
+        variantsProp.arraySize = variants.Length;
+        for (int i = 0; i < variants.Length; i++)
+        {
+            variantsProp.GetArrayElementAtIndex(i).objectReferenceValue = variants[i];
+        }
+        so.ApplyModifiedPropertiesWithoutUndo();
 
         SavePrefabAndDestroy(go, "GroundObstacle");
     }
 
     private static void BuildFlyingObstacle()
     {
-        var frameA = FindSprite("Assets/Sprites/Obstacles/Pterodactylus.png", "pterodactylus_0");
-        var frameB = FindSprite("Assets/Sprites/Obstacles/Pterodactylus.png", "pterodactylus_1");
+        var frameA = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/bird_0.png");
+        var frameB = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/bird_1.png");
         if (frameA == null || frameB == null)
         {
             Debug.LogError("VERIFY FAILED: flying obstacle frames not found");
@@ -97,34 +115,35 @@ public static class BuildObstaclePrefabs
         Object.DestroyImmediate(go);
     }
 
-    private static Sprite FindSprite(string path, string name)
-    {
-        var all = AssetDatabase.LoadAllAssetsAtPath(path);
-        foreach (var obj in all)
-        {
-            if (obj is Sprite s && s.name == name)
-            {
-                return s;
-            }
-        }
-        return null;
-    }
-
     private static void Verify()
     {
-        string[] names = { "GroundObstacle", "FlyingObstacle" };
-        foreach (var name in names)
+        var ground = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/GroundObstacle.prefab");
+        if (ground != null)
         {
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/{name}.prefab");
-            if (prefab == null)
+            var obstacle = ground.GetComponent<GroundObstacle>();
+            var so = new SerializedObject(obstacle);
+            var variantsProp = so.FindProperty("variants");
+            Debug.Log($"VERIFY: GroundObstacle pos={ground.transform.position} variantCount={variantsProp.arraySize}");
+            for (int i = 0; i < variantsProp.arraySize; i++)
             {
-                Debug.LogError($"VERIFY FAILED: {name}.prefab missing");
-                continue;
+                Debug.Log($"VERIFY: GroundObstacle variant[{i}]={variantsProp.GetArrayElementAtIndex(i).objectReferenceValue?.name}");
             }
+        }
+        else
+        {
+            Debug.LogError("VERIFY FAILED: GroundObstacle.prefab missing");
+        }
 
-            var renderer = prefab.GetComponent<SpriteRenderer>();
-            var collider = prefab.GetComponent<BoxCollider2D>();
-            Debug.Log($"VERIFY: {name} pos={prefab.transform.position} scale={prefab.transform.localScale} sprite={(renderer != null ? renderer.sprite.name : "NULL")} colliderSize={(collider != null ? collider.size.ToString() : "NULL")} isTrigger={(collider != null ? collider.isTrigger.ToString() : "NULL")}");
+        var flying = AssetDatabase.LoadAssetAtPath<GameObject>($"{PrefabFolder}/FlyingObstacle.prefab");
+        if (flying != null)
+        {
+            var collider = flying.GetComponent<BoxCollider2D>();
+            var renderer = flying.GetComponent<SpriteRenderer>();
+            Debug.Log($"VERIFY: FlyingObstacle pos={flying.transform.position} sprite={renderer.sprite.name} colliderSize={collider.size} colliderOffset={collider.offset}");
+        }
+        else
+        {
+            Debug.LogError("VERIFY FAILED: FlyingObstacle.prefab missing");
         }
     }
 }
