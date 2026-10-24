@@ -8,17 +8,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     [SerializeField] private float groundY;
     [SerializeField] private float jumpSpeed = 9f;
-    [SerializeField] private float dashSpeedMultiplier = 3f;
-    [SerializeField] private float dashDuration = 0.25f;
+    [SerializeField] private float dashSpeedMultiplier = 4f;
+    [SerializeField] private float dashDuration = 0.35f;
     [SerializeField] private float dashCooldown = 0.75f;
-    [SerializeField] private GameObject dustPuffPrefab;
+    [SerializeField] private float dashLungeDistance = 1.6f;
+    [SerializeField] private float duckScale = 0.5f;
 
     private Rigidbody2D body;
     private Animator animator;
     private InputAction jumpAction;
     private InputAction dashAction;
+    private InputAction duckAction;
 
     private bool grounded = true;
+    private bool duckHeld;
+    private float restX;
     private float dashTimeLeft;
     private float dashCooldownLeft;
     private bool dead;
@@ -31,26 +35,34 @@ public class PlayerController : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        restX = body.position.x;
 
         var map = inputActions.FindActionMap("Gameplay");
         jumpAction = map.FindAction("Jump");
         dashAction = map.FindAction("Dash");
+        duckAction = map.FindAction("Duck");
     }
 
     private void OnEnable()
     {
         jumpAction.Enable();
         dashAction.Enable();
+        duckAction.Enable();
         jumpAction.performed += OnJump;
         dashAction.performed += OnDash;
+        duckAction.performed += OnDuckPerformed;
+        duckAction.canceled += OnDuckCanceled;
     }
 
     private void OnDisable()
     {
         jumpAction.performed -= OnJump;
         dashAction.performed -= OnDash;
+        duckAction.performed -= OnDuckPerformed;
+        duckAction.canceled -= OnDuckCanceled;
         jumpAction.Disable();
         dashAction.Disable();
+        duckAction.Disable();
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -60,7 +72,6 @@ public class PlayerController : MonoBehaviour
             return;
         }
         body.linearVelocity = new Vector2(0f, jumpSpeed);
-        SpawnDustPuff();
     }
 
     private void OnDash(InputAction.CallbackContext context)
@@ -73,6 +84,16 @@ public class PlayerController : MonoBehaviour
         dashCooldownLeft = dashCooldown;
     }
 
+    private void OnDuckPerformed(InputAction.CallbackContext context)
+    {
+        duckHeld = true;
+    }
+
+    private void OnDuckCanceled(InputAction.CallbackContext context)
+    {
+        duckHeld = false;
+    }
+
     private void Update()
     {
         if (dead)
@@ -82,6 +103,7 @@ public class PlayerController : MonoBehaviour
 
         TickDash();
         TickGroundCheck();
+        TickDuck();
 
         animator.SetBool("Grounded", grounded);
         animator.speed = GameSpeed.Current / GameSpeed.DefaultBaseSpeed;
@@ -94,9 +116,15 @@ public class PlayerController : MonoBehaviour
             dashTimeLeft -= Time.deltaTime;
             GameSpeed.DashMultiplier = dashSpeedMultiplier;
 
+            float elapsed = dashDuration - Mathf.Max(dashTimeLeft, 0f);
+            float t = Mathf.Clamp01(elapsed / dashDuration);
+            float lunge = Mathf.Sin(t * Mathf.PI) * dashLungeDistance;
+            body.position = new Vector2(restX + lunge, body.position.y);
+
             if (dashTimeLeft <= 0f)
             {
                 GameSpeed.DashMultiplier = 1f;
+                body.position = new Vector2(restX, body.position.y);
             }
         }
 
@@ -108,16 +136,10 @@ public class PlayerController : MonoBehaviour
 
     private void TickGroundCheck()
     {
-        bool wasGrounded = grounded;
         grounded = body.position.y <= groundY && body.linearVelocity.y <= 0f;
         if (!grounded)
         {
             return;
-        }
-
-        if (!wasGrounded)
-        {
-            SpawnDustPuff();
         }
 
         if (body.position.y != groundY)
@@ -130,12 +152,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void SpawnDustPuff()
+    private void TickDuck()
     {
-        if (dustPuffPrefab != null)
-        {
-            Instantiate(dustPuffPrefab, new Vector3(body.position.x, groundY, 0f), Quaternion.identity);
-        }
+        bool ducking = duckHeld && grounded;
+        animator.SetBool("Ducking", ducking);
+        transform.localScale = new Vector3(1f, ducking ? duckScale : 1f, 1f);
     }
 
     public void PlayHit()

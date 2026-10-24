@@ -2108,7 +2108,8 @@ MonoBehaviour:
   dashSpeedMultiplier: 3
   dashDuration: 0.25
   dashCooldown: 0.75
-  dustPuffPrefab: {fileID: 6677128354596243429, guid: 880c855896f936448a6a37baa3dc1545, type: 3}
+  dashLungeDistance: 1.6
+  duckScale: 0.5
 --- !u!95 &1327920891
 Animator:
   serializedVersion: 7
@@ -2273,7 +2274,7 @@ Transform:
   m_GameObject: {fileID: 1327920889}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2928,8 +2929,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0742024bc9455d4f86836758cea29df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EffectsController
-  coinPopPrefab: {fileID: 3087188768491167872, guid: 1bf076f327ec6544587a1101ef5981de, type: 3}
-  hitImpactPrefab: {fileID: 1461436543425883837, guid: 9858a7948d071394aa19fd03af258fc5, type: 3}
   cameraShake: {fileID: 519420033}
 --- !u!4 &1837453219
 Transform:
