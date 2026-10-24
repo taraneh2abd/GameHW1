@@ -9,6 +9,7 @@ public class ParallaxLayer : MonoBehaviour
     [SerializeField] private float speedScale = 1f;
     [SerializeField] private int sortingOrder;
     [SerializeField] private int segmentCount = 3;
+    [SerializeField] private Color tint = Color.white;
 
     private Transform[] segments;
     private float segmentWidth;
