@@ -1,0 +1,196 @@
+using UnityEditor;
+using UnityEditor.Animations;
+using UnityEngine;
+
+public static class BuildPlayerAnimator
+{
+    private const string FolderPath = "Assets/Animations/Player";
+    private const string ControllerPath = FolderPath + "/Player.controller";
+    private const string SpriteSheetPath = "Assets/Sprites/Player/player.png";
+
+    [MenuItem("Tools/Setup/Build Player Animator")]
+    public static void Build()
+    {
+        EnsureFolder();
+
+        var frames = LoadFrames(SpriteSheetPath, new[] { "player_0", "player_1", "player_2", "player_3" });
+        if (frames == null)
+        {
+            return;
+        }
+
+        var runClip = CreateLoopingClip("Run", frames, 10f);
+        var jumpClip = CreateStaticClip("Jump", frames[1], 0.2f);
+        var hitClip = CreateStaticClip("Hit", frames[0], 0.15f);
+        var deathClip = CreateStaticClip("Death", frames[0], 0.2f);
+
+        if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) != null)
+        {
+            AssetDatabase.DeleteAsset(ControllerPath);
+        }
+
+        var controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
+        controller.AddParameter("Grounded", AnimatorControllerParameterType.Bool);
+        controller.AddParameter("Hit", AnimatorControllerParameterType.Trigger);
+        controller.AddParameter("Die", AnimatorControllerParameterType.Trigger);
+        controller.AddParameter("Dead", AnimatorControllerParameterType.Bool);
+
+        var stateMachine = controller.layers[0].stateMachine;
+
+        var runState = stateMachine.AddState("Run");
+        runState.motion = runClip;
+        stateMachine.defaultState = runState;
+
+        var jumpState = stateMachine.AddState("Jump");
+        jumpState.motion = jumpClip;
+
+        var hitState = stateMachine.AddState("Hit");
+        hitState.motion = hitClip;
+
+        var deathState = stateMachine.AddState("Death");
+        deathState.motion = deathClip;
+
+        var runToJump = runState.AddTransition(jumpState);
+        runToJump.hasExitTime = false;
+        runToJump.duration = 0f;
+        runToJump.AddCondition(AnimatorConditionMode.IfNot, 0, "Grounded");
+
+        var jumpToRun = jumpState.AddTransition(runState);
+        jumpToRun.hasExitTime = false;
+        jumpToRun.duration = 0f;
+        jumpToRun.AddCondition(AnimatorConditionMode.If, 0, "Grounded");
+
+        var anyToHit = stateMachine.AddAnyStateTransition(hitState);
+        anyToHit.hasExitTime = false;
+        anyToHit.duration = 0f;
+        anyToHit.canTransitionToSelf = false;
+        anyToHit.AddCondition(AnimatorConditionMode.If, 0, "Hit");
+        anyToHit.AddCondition(AnimatorConditionMode.IfNot, 0, "Dead");
+
+        var hitToRun = hitState.AddTransition(runState);
+        hitToRun.hasExitTime = true;
+        hitToRun.exitTime = 1f;
+        hitToRun.duration = 0f;
+
+        var anyToDeath = stateMachine.AddAnyStateTransition(deathState);
+        anyToDeath.hasExitTime = false;
+        anyToDeath.duration = 0f;
+        anyToDeath.canTransitionToSelf = false;
+        anyToDeath.AddCondition(AnimatorConditionMode.If, 0, "Die");
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+        Verify();
+    }
+
+    private static void EnsureFolder()
+    {
+        if (!AssetDatabase.IsValidFolder("Assets/Animations"))
+        {
+            AssetDatabase.CreateFolder("Assets", "Animations");
+        }
+        if (!AssetDatabase.IsValidFolder(FolderPath))
+        {
+            AssetDatabase.CreateFolder("Assets/Animations", "Player");
+        }
+    }
+
+    private static Sprite[] LoadFrames(string path, string[] names)
+    {
+        var all = AssetDatabase.LoadAllAssetsAtPath(path);
+        var result = new Sprite[names.Length];
+        for (int i = 0; i < names.Length; i++)
+        {
+            foreach (var obj in all)
+            {
+                if (obj is Sprite sprite && sprite.name == names[i])
+                {
+                    result[i] = sprite;
+                    break;
+                }
+            }
+
+            if (result[i] == null)
+            {
+                Debug.LogError($"VERIFY FAILED: missing frame '{names[i]}' in {path}");
+                return null;
+            }
+        }
+        return result;
+    }
+
+    private static AnimationClip CreateLoopingClip(string name, Sprite[] frames, float fps)
+    {
+        var clip = new AnimationClip { frameRate = fps };
+        var binding = new EditorCurveBinding { path = "", type = typeof(SpriteRenderer), propertyName = "m_Sprite" };
+
+        var keyframes = new ObjectReferenceKeyframe[frames.Length];
+        for (int i = 0; i < frames.Length; i++)
+        {
+            keyframes[i] = new ObjectReferenceKeyframe { time = i / fps, value = frames[i] };
+        }
+        AnimationUtility.SetObjectReferenceCurve(clip, binding, keyframes);
+
+        var settings = AnimationUtility.GetAnimationClipSettings(clip);
+        settings.loopTime = true;
+        AnimationUtility.SetAnimationClipSettings(clip, settings);
+
+        var path = $"{FolderPath}/{name}.anim";
+        if (AssetDatabase.LoadAssetAtPath<AnimationClip>(path) != null)
+        {
+            AssetDatabase.DeleteAsset(path);
+        }
+        AssetDatabase.CreateAsset(clip, path);
+        return clip;
+    }
+
+    private static AnimationClip CreateStaticClip(string name, Sprite sprite, float duration)
+    {
+        var clip = new AnimationClip { frameRate = 10f };
+        var binding = new EditorCurveBinding { path = "", type = typeof(SpriteRenderer), propertyName = "m_Sprite" };
+
+        var keyframes = new[]
+        {
+            new ObjectReferenceKeyframe { time = 0f, value = sprite },
+            new ObjectReferenceKeyframe { time = duration, value = sprite },
+        };
+        AnimationUtility.SetObjectReferenceCurve(clip, binding, keyframes);
+
+        var settings = AnimationUtility.GetAnimationClipSettings(clip);
+        settings.loopTime = false;
+        AnimationUtility.SetAnimationClipSettings(clip, settings);
+
+        var path = $"{FolderPath}/{name}.anim";
+        if (AssetDatabase.LoadAssetAtPath<AnimationClip>(path) != null)
+        {
+            AssetDatabase.DeleteAsset(path);
+        }
+        AssetDatabase.CreateAsset(clip, path);
+        return clip;
+    }
+
+    private static void Verify()
+    {
+        var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
+        if (controller == null)
+        {
+            Debug.LogError($"VERIFY FAILED: could not reload {ControllerPath}");
+            return;
+        }
+
+        Debug.Log($"VERIFY: parameters={controller.parameters.Length}");
+        foreach (var p in controller.parameters)
+        {
+            Debug.Log($"VERIFY: param name={p.name} type={p.type}");
+        }
+
+        var sm = controller.layers[0].stateMachine;
+        Debug.Log($"VERIFY: states={sm.states.Length} defaultState={sm.defaultState.name}");
+        foreach (var s in sm.states)
+        {
+            Debug.Log($"VERIFY: state={s.state.name} motion={(s.state.motion != null ? s.state.motion.name : "NULL")} outgoingTransitions={s.state.transitions.Length}");
+        }
+        Debug.Log($"VERIFY: anyStateTransitions={sm.anyStateTransitions.Length}");
+    }
+}
