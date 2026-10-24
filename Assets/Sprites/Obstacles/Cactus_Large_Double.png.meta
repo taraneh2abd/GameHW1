@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 0d845a3241723934592fe6643150ed2a
+guid: bba021b8528d30245b03858a4dfb1a73
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4256597524560410283
-    second: bird_0_0
+      213: -6142680107896787359
+    second: Cactus_Large_Double_0
+  - first:
+      213: -8478640310003509100
+    second: Cactus_Large_Double_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,9 +52,9 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 75
+  alignment: 7
+  spritePivot: {x: 0.5, y: 0}
+  spritePixelsToUnits: 90
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -74,7 +77,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: 4
     textureCompression: 0
@@ -102,13 +105,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bird_0_0
+      name: Cactus_Large_Double_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 92
-        height: 60
+        width: 49
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +120,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 55905c49a178de4c0800000000000000
-      internalID: -4256597524560410283
+      spriteID: 16e24f7bcf0d0caa0800000000000000
+      internalID: -6142680107896787359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cactus_Large_Double_1
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 0
+        width: 51
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 498deef4f81d55a80800000000000000
+      internalID: -8478640310003509100
       vertices: []
       indices: 
       edges: []
@@ -137,7 +162,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      bird_0_0: -4256597524560410283
+      Cactus_Large_Double_0: -6142680107896787359
+      Cactus_Large_Double_1: -8478640310003509100
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

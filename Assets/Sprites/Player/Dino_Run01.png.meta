@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 861c3cbe4fb5a2540a0094d9949c6334
+guid: c92dda0de0685584eb377ddb4492e442
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3299295383742767303
-    second: player_run_5_0
+      213: -3341399490371717788
+    second: Dino_Run01_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,8 +49,8 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 7
+  spritePivot: {x: 0.5, y: 0}
   spritePixelsToUnits: 90
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -74,7 +74,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: 4
     textureCompression: 0
@@ -102,13 +102,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_run_5_0
+      name: Dino_Run01_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 90
-        height: 96
+        width: 88
+        height: 95
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +117,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7c0e21dcba379cd20800000000000000
-      internalID: 3299295383742767303
+      spriteID: 465f8b3fdd6f0a1d0800000000000000
+      internalID: -3341399490371717788
       vertices: []
       indices: 
       edges: []
@@ -137,7 +137,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player_run_5_0: 3299295383742767303
+      Dino_Run01_0: -3341399490371717788
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
