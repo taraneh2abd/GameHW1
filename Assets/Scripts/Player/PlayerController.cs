@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dashSpeedMultiplier = 3f;
     [SerializeField] private float dashDuration = 0.25f;
     [SerializeField] private float dashCooldown = 0.75f;
+    [SerializeField] private GameObject dustPuffPrefab;
 
     private Rigidbody2D body;
     private Animator animator;
@@ -59,6 +60,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         body.linearVelocity = new Vector2(0f, jumpSpeed);
+        SpawnDustPuff();
     }
 
     private void OnDash(InputAction.CallbackContext context)
@@ -82,6 +84,7 @@ public class PlayerController : MonoBehaviour
         TickGroundCheck();
 
         animator.SetBool("Grounded", grounded);
+        animator.speed = GameSpeed.Current / GameSpeed.DefaultBaseSpeed;
     }
 
     private void TickDash()
@@ -105,10 +108,16 @@ public class PlayerController : MonoBehaviour
 
     private void TickGroundCheck()
     {
+        bool wasGrounded = grounded;
         grounded = body.position.y <= groundY && body.linearVelocity.y <= 0f;
         if (!grounded)
         {
             return;
+        }
+
+        if (!wasGrounded)
+        {
+            SpawnDustPuff();
         }
 
         if (body.position.y != groundY)
@@ -118,6 +127,14 @@ public class PlayerController : MonoBehaviour
         if (body.linearVelocity.y < 0f)
         {
             body.linearVelocity = new Vector2(body.linearVelocity.x, 0f);
+        }
+    }
+
+    private void SpawnDustPuff()
+    {
+        if (dustPuffPrefab != null)
+        {
+            Instantiate(dustPuffPrefab, new Vector3(body.position.x, groundY, 0f), Quaternion.identity);
         }
     }
 

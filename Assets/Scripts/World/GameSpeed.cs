@@ -5,7 +5,7 @@ using UnityEngine;
 /// need to touch one place.
 public static class GameSpeed
 {
-    private const float DefaultBaseSpeed = 6f;
+    public const float DefaultBaseSpeed = 6f;
 
     public static float BaseSpeed { get; private set; } = DefaultBaseSpeed;
     public static float DashMultiplier { get; set; } = 1f;

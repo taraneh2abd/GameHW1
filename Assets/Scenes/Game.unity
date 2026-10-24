@@ -287,6 +287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 253362062}
   - component: {fileID: 253362061}
+  - component: {fileID: 253362063}
   m_Layer: 0
   m_Name: ScoreTicker
   m_TagString: Untagged
@@ -321,6 +322,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &253362063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253362060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67bf2b732bc5305468e615c387540823, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DifficultyRamp
+  speedPerSecond: 0.15
+  maxSpeed: 14
 --- !u!1 &284930540
 GameObject:
   m_ObjectHideFlags: 0
