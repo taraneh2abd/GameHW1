@@ -10,6 +10,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     public static event Action<int, int> LivesChanged;
+    public static event Action<Vector3> Hit;
     public static event Action Died;
 
     private PlayerController controller;
@@ -71,6 +72,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         {
             controller.PlayHit();
             invulnerableTimeLeft = invulnerabilityDuration;
+            Hit?.Invoke(transform.position);
         }
     }
 }

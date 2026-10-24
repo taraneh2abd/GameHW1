@@ -7,16 +7,21 @@ public class ScoreTicker : MonoBehaviour
     private void OnEnable()
     {
         ScoreManager.Reset();
-        Coin.Collected += ScoreManager.AddCoinScore;
+        Coin.Collected += OnCoinCollected;
     }
 
     private void OnDisable()
     {
-        Coin.Collected -= ScoreManager.AddCoinScore;
+        Coin.Collected -= OnCoinCollected;
     }
 
     private void Update()
     {
         ScoreManager.AddElapsedTime(Time.deltaTime);
+    }
+
+    private void OnCoinCollected(Vector3 position)
+    {
+        ScoreManager.AddCoinScore();
     }
 }
