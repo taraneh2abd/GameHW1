@@ -26,6 +26,7 @@ public static class BuildPlayerAnimator
         var jumpClip = CreateStaticClip("Jump", idleSprite, 0.2f);
         var hitClip = CreateStaticClip("Hit", runFrames[0], 0.15f);
         var deathClip = CreateStaticClip("Death", idleSprite, 0.2f);
+        var duckClip = CreateStaticClip("Duck", runFrames[1], 0.2f);
 
         if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) != null)
         {
@@ -37,6 +38,7 @@ public static class BuildPlayerAnimator
         controller.AddParameter("Hit", AnimatorControllerParameterType.Trigger);
         controller.AddParameter("Die", AnimatorControllerParameterType.Trigger);
         controller.AddParameter("Dead", AnimatorControllerParameterType.Bool);
+        controller.AddParameter("Ducking", AnimatorControllerParameterType.Bool);
 
         var stateMachine = controller.layers[0].stateMachine;
 
@@ -53,6 +55,9 @@ public static class BuildPlayerAnimator
         var deathState = stateMachine.AddState("Death");
         deathState.motion = deathClip;
 
+        var duckState = stateMachine.AddState("Duck");
+        duckState.motion = duckClip;
+
         var runToJump = runState.AddTransition(jumpState);
         runToJump.hasExitTime = false;
         runToJump.duration = 0f;
@@ -62,6 +67,16 @@ public static class BuildPlayerAnimator
         jumpToRun.hasExitTime = false;
         jumpToRun.duration = 0f;
         jumpToRun.AddCondition(AnimatorConditionMode.If, 0, "Grounded");
+
+        var runToDuck = runState.AddTransition(duckState);
+        runToDuck.hasExitTime = false;
+        runToDuck.duration = 0f;
+        runToDuck.AddCondition(AnimatorConditionMode.If, 0, "Ducking");
+
+        var duckToRun = duckState.AddTransition(runState);
+        duckToRun.hasExitTime = false;
+        duckToRun.duration = 0f;
+        duckToRun.AddCondition(AnimatorConditionMode.IfNot, 0, "Ducking");
 
         var anyToHit = stateMachine.AddAnyStateTransition(hitState);
         anyToHit.hasExitTime = false;

@@ -5,13 +5,11 @@ public static class BuildObstaclePrefabs
 {
     private const string PrefabFolder = "Assets/Prefabs";
     private const float GroundTopY = 0f;
-    private const float FlyingObstacleY = 1.45f;
-
-    // the bird art shares a padded canvas with empty space above the visible
-    // wingspan; the trigger is shrunk to the actual body instead of the full
-    // (padded) sprite rect, and offset to that body's true center
-    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(0.9f, 0.35f);
-    private static readonly Vector2 FlyingObstacleColliderOffset = new Vector2(0f, -0.156f);
+    // sits in the upper half of the player's standing height: a standing
+    // player clips it, a ducking player (shrunk collider) passes underneath
+    private const float FlyingObstacleY = 0.78f;
+    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(0.9f, 0.45f);
+    private static readonly Vector2 FlyingObstacleColliderOffset = Vector2.zero;
 
     private struct CactusVariant
     {
