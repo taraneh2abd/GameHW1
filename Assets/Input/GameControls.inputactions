@@ -1,0 +1,78 @@
+{
+    "version": 1,
+    "name": "GameControls",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "2306cd07-7fdd-40a9-a512-f9ea01f10701",
+            "actions": [
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "6d6891e3-06be-47e4-a597-be246aadad8d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "998cf486-c7d9-4aa1-ac08-80f3635814b3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "d4202a28-71e7-453d-9c71-57b5198b21cb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3be42f16-2b93-4e66-b13e-1ecf289c695c",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6a28544a-7eed-478b-876b-1103808ae9e3",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b4bc5348-b282-429a-be93-6f0b49e143ac",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
