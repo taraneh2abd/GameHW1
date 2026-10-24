@@ -1,21 +1,25 @@
 using UnityEngine;
 
 /// Shared world-scroll speed (world units/second) that the ground, parallax
-/// layers, and obstacles all move by, so difficulty ramping only needs to
-/// touch one place.
+/// layers, and obstacles all move by, so difficulty ramping and dashing only
+/// need to touch one place.
 public static class GameSpeed
 {
-    public const float BaseSpeed = 6f;
+    private const float DefaultBaseSpeed = 6f;
 
-    public static float Current { get; private set; } = BaseSpeed;
+    public static float BaseSpeed { get; private set; } = DefaultBaseSpeed;
+    public static float DashMultiplier { get; set; } = 1f;
+
+    public static float Current => BaseSpeed * DashMultiplier;
 
     public static void Reset()
     {
-        Current = BaseSpeed;
+        BaseSpeed = DefaultBaseSpeed;
+        DashMultiplier = 1f;
     }
 
-    public static void SetCurrent(float value)
+    public static void SetBaseSpeed(float value)
     {
-        Current = Mathf.Max(0f, value);
+        BaseSpeed = Mathf.Max(0f, value);
     }
 }
