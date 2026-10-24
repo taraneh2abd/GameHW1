@@ -287,6 +287,7 @@ GameObject:
   m_Component:
   - component: {fileID: 253362062}
   - component: {fileID: 253362061}
+  - component: {fileID: 253362063}
   m_Layer: 0
   m_Name: ScoreTicker
   m_TagString: Untagged
@@ -321,6 +322,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &253362063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 253362060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67bf2b732bc5305468e615c387540823, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DifficultyRamp
+  speedPerSecond: 0.15
+  maxSpeed: 14
 --- !u!1 &284930540
 GameObject:
   m_ObjectHideFlags: 0
@@ -1047,6 +1062,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1172,6 +1188,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b3241c7abbff294dad20a830f8c8b01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraShake
 --- !u!1 &585315552
 GameObject:
   m_ObjectHideFlags: 0
@@ -2080,6 +2108,7 @@ MonoBehaviour:
   dashSpeedMultiplier: 3
   dashDuration: 0.25
   dashCooldown: 0.75
+  dustPuffPrefab: {fileID: 6677128354596243429, guid: 880c855896f936448a6a37baa3dc1545, type: 3}
 --- !u!95 &1327920891
 Animator:
   serializedVersion: 7
@@ -2870,6 +2899,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1755889120}
   m_CullTransparentMesh: 1
+--- !u!1 &1837453217
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1837453219}
+  - component: {fileID: 1837453218}
+  m_Layer: 0
+  m_Name: Effects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1837453218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837453217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0742024bc9455d4f86836758cea29df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectsController
+  coinPopPrefab: {fileID: 3087188768491167872, guid: 1bf076f327ec6544587a1101ef5981de, type: 3}
+  hitImpactPrefab: {fileID: 1461436543425883837, guid: 9858a7948d071394aa19fd03af258fc5, type: 3}
+  cameraShake: {fileID: 519420033}
+--- !u!4 &1837453219
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837453217}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1838240467
 GameObject:
   m_ObjectHideFlags: 0
@@ -3381,3 +3457,4 @@ SceneRoots:
   - {fileID: 136189918}
   - {fileID: 1571867595}
   - {fileID: 1693147834}
+  - {fileID: 1837453219}

@@ -23,7 +23,9 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void Update()
     {
-        timer += Time.deltaTime;
+        // scale by world speed so obstacle spacing stays roughly constant
+        // as the game speeds up, instead of spreading out over time
+        timer += Time.deltaTime * (GameSpeed.BaseSpeed / GameSpeed.DefaultBaseSpeed);
         if (timer < nextInterval)
         {
             return;
