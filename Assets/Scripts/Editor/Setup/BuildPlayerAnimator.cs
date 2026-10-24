@@ -6,23 +6,30 @@ public static class BuildPlayerAnimator
 {
     private const string FolderPath = "Assets/Animations/Player";
     private const string ControllerPath = FolderPath + "/Player.controller";
-    private const string SpriteSheetPath = "Assets/Sprites/Player/player.png";
+    private const string SpriteFolder = "Assets/Sprites/Player";
 
     [MenuItem("Tools/Setup/Build Player Animator")]
     public static void Build()
     {
         EnsureFolder();
 
-        var frames = LoadFrames(SpriteSheetPath, new[] { "player_0", "player_1", "player_2", "player_3" });
-        if (frames == null)
+        var runFrames = new[]
         {
+            LoadSprite("player_run_0"), LoadSprite("player_run_1"), LoadSprite("player_run_2"),
+            LoadSprite("player_run_3"), LoadSprite("player_run_4"), LoadSprite("player_run_5"),
+        };
+        var jumpSprite = LoadSprite("player_jump");
+
+        if (System.Array.IndexOf(runFrames, null) >= 0 || jumpSprite == null)
+        {
+            Debug.LogError("VERIFY FAILED: missing one or more player sprites");
             return;
         }
 
-        var runClip = CreateLoopingClip("Run", frames, 10f);
-        var jumpClip = CreateStaticClip("Jump", frames[1], 0.2f);
-        var hitClip = CreateStaticClip("Hit", frames[0], 0.15f);
-        var deathClip = CreateStaticClip("Death", frames[0], 0.2f);
+        var runClip = CreateLoopingClip("Run", runFrames, 10f);
+        var jumpClip = CreateStaticClip("Jump", jumpSprite, 0.2f);
+        var hitClip = CreateStaticClip("Hit", runFrames[1], 0.15f);
+        var deathClip = CreateStaticClip("Death", runFrames[3], 0.2f);
 
         if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) != null)
         {
@@ -96,28 +103,14 @@ public static class BuildPlayerAnimator
         }
     }
 
-    private static Sprite[] LoadFrames(string path, string[] names)
+    private static Sprite LoadSprite(string name)
     {
-        var all = AssetDatabase.LoadAllAssetsAtPath(path);
-        var result = new Sprite[names.Length];
-        for (int i = 0; i < names.Length; i++)
+        var sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"{SpriteFolder}/{name}.png");
+        if (sprite == null)
         {
-            foreach (var obj in all)
-            {
-                if (obj is Sprite sprite && sprite.name == names[i])
-                {
-                    result[i] = sprite;
-                    break;
-                }
-            }
-
-            if (result[i] == null)
-            {
-                Debug.LogError($"VERIFY FAILED: missing frame '{names[i]}' in {path}");
-                return null;
-            }
+            Debug.LogError($"VERIFY FAILED: missing sprite {name}");
         }
-        return result;
+        return sprite;
     }
 
     private static AnimationClip CreateLoopingClip(string name, Sprite[] frames, float fps)
@@ -180,11 +173,6 @@ public static class BuildPlayerAnimator
         }
 
         Debug.Log($"VERIFY: parameters={controller.parameters.Length}");
-        foreach (var p in controller.parameters)
-        {
-            Debug.Log($"VERIFY: param name={p.name} type={p.type}");
-        }
-
         var sm = controller.layers[0].stateMachine;
         Debug.Log($"VERIFY: states={sm.states.Length} defaultState={sm.defaultState.name}");
         foreach (var s in sm.states)

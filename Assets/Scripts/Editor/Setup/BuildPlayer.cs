@@ -15,7 +15,7 @@ public static class BuildPlayer
     {
         var scene = EditorSceneManager.OpenScene(ScenePath);
 
-        var startSprite = FindSprite("Assets/Sprites/Player/player.png", "player_0");
+        var startSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Player/player_run_0.png");
         var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>("Assets/Animations/Player/Player.controller");
         var inputActions = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/Input/GameControls.inputactions");
 
@@ -63,19 +63,6 @@ public static class BuildPlayer
         EditorSceneManager.SaveScene(scene);
 
         Verify();
-    }
-
-    private static Sprite FindSprite(string path, string name)
-    {
-        var all = AssetDatabase.LoadAllAssetsAtPath(path);
-        foreach (var obj in all)
-        {
-            if (obj is Sprite s && s.name == name)
-            {
-                return s;
-            }
-        }
-        return null;
     }
 
     private static void Verify()
