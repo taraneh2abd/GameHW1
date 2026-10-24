@@ -135,5 +135,6 @@ public class PlayerController : MonoBehaviour
         GameSpeed.DashMultiplier = 1f;
         animator.SetBool("Dead", true);
         animator.SetTrigger("Die");
+        body.rotation = -90f;
     }
 }
