@@ -13,23 +13,19 @@ public static class BuildPlayerAnimator
     {
         EnsureFolder();
 
-        var runFrames = new[]
-        {
-            LoadSprite("player_run_0"), LoadSprite("player_run_1"), LoadSprite("player_run_2"),
-            LoadSprite("player_run_3"), LoadSprite("player_run_4"), LoadSprite("player_run_5"),
-        };
-        var jumpSprite = LoadSprite("player_jump");
+        var runFrames = new[] { LoadSprite("Dino_Run01"), LoadSprite("Dino_Run02") };
+        var idleSprite = LoadSprite("Dino_Idle");
 
-        if (System.Array.IndexOf(runFrames, null) >= 0 || jumpSprite == null)
+        if (System.Array.IndexOf(runFrames, null) >= 0 || idleSprite == null)
         {
             Debug.LogError("VERIFY FAILED: missing one or more player sprites");
             return;
         }
 
-        var runClip = CreateLoopingClip("Run", runFrames, 10f);
-        var jumpClip = CreateStaticClip("Jump", jumpSprite, 0.2f);
-        var hitClip = CreateStaticClip("Hit", runFrames[1], 0.15f);
-        var deathClip = CreateStaticClip("Death", runFrames[3], 0.2f);
+        var runClip = CreateLoopingClip("Run", runFrames, 8f);
+        var jumpClip = CreateStaticClip("Jump", idleSprite, 0.2f);
+        var hitClip = CreateStaticClip("Hit", runFrames[0], 0.15f);
+        var deathClip = CreateStaticClip("Death", idleSprite, 0.2f);
 
         if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) != null)
         {

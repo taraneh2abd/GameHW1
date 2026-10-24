@@ -1,11 +1,14 @@
 using UnityEngine;
 
 /// Picks a random cactus look each time it's spawned, for visual variety.
+/// Sprites share a taller padded canvas (bottom-aligned), so the real visible
+/// height is supplied separately rather than trusted from sprite bounds.
 public class GroundObstacle : DamagingObstacle
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private BoxCollider2D boxCollider;
     [SerializeField] private Sprite[] variants;
+    [SerializeField] private float[] variantHeights;
 
     protected override void Awake()
     {
@@ -25,11 +28,12 @@ public class GroundObstacle : DamagingObstacle
             return;
         }
 
-        var sprite = variants[Random.Range(0, variants.Length)];
-        spriteRenderer.sprite = sprite;
-        boxCollider.size = sprite.bounds.size;
+        int index = Random.Range(0, variants.Length);
+        var sprite = variants[index];
+        float height = variantHeights[index];
 
-        float halfHeight = sprite.bounds.extents.y;
-        transform.position = new Vector3(transform.position.x, halfHeight, transform.position.z);
+        spriteRenderer.sprite = sprite;
+        boxCollider.size = new Vector2(sprite.bounds.size.x, height);
+        boxCollider.offset = new Vector2(0f, height * 0.5f);
     }
 }

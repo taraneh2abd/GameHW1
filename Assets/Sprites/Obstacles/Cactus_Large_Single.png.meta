@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0a117ace8a84cad4896b717a4e8ca758
+guid: 790c33d8d4e779349a6956d57d0ddb8b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -563434757296747944
-    second: player_run_4_0
+      213: 1496728867514183573
+    second: Cactus_Large_Single_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,8 +49,8 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 7
+  spritePivot: {x: 0.5, y: 0}
   spritePixelsToUnits: 90
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -74,7 +74,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: 4
     textureCompression: 0
@@ -102,13 +102,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_run_4_0
+      name: Cactus_Large_Single_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 90
-        height: 97
+        width: 50
+        height: 96
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +117,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 85a083dc2174e28f0800000000000000
-      internalID: -563434757296747944
+      spriteID: 59f614999f275c410800000000000000
+      internalID: 1496728867514183573
       vertices: []
       indices: 
       edges: []
@@ -137,7 +137,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player_run_4_0: -563434757296747944
+      Cactus_Large_Single_0: 1496728867514183573
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

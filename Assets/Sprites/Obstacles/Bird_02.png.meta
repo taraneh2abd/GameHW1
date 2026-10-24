@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: eb0aeb1a26d53b546a2c8d58c5190d90
+guid: 8ff7d417a025e3649b1b782ff63ca9ab
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4905096111039553398
-    second: player_run_2_0
+      213: 4125150189441033765
+    second: Bird_02_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -74,7 +74,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: 4
     textureCompression: 0
@@ -102,13 +102,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_run_2_0
+      name: Bird_02_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 90
-        height: 96
+        y: 19
+        width: 92
+        height: 62
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +117,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 67f99a7bce6621440800000000000000
-      internalID: 4905096111039553398
+      spriteID: 526a4c6cd3a7f3930800000000000000
+      internalID: 4125150189441033765
       vertices: []
       indices: 
       edges: []
@@ -137,7 +137,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      player_run_2_0: 4905096111039553398
+      Bird_02_0: 4125150189441033765
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

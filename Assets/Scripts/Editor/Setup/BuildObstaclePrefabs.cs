@@ -5,13 +5,37 @@ public static class BuildObstaclePrefabs
 {
     private const string PrefabFolder = "Assets/Prefabs";
     private const float GroundTopY = 0f;
-    private const float FlyingObstacleY = 1.35f;
+    private const float FlyingObstacleY = 1.45f;
 
-    // the bird art has empty padding below the visible wingspan within its
-    // frame, so the trigger is shrunk/offset to the actual silhouette
-    // instead of the full (padded) sprite rect
-    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(1f, 0.4f);
-    private static readonly Vector2 FlyingObstacleColliderOffset = new Vector2(0f, 0.15f);
+    // the bird art shares a padded canvas with empty space above the visible
+    // wingspan; the trigger is shrunk to the actual body instead of the full
+    // (padded) sprite rect, and offset to that body's true center
+    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(0.9f, 0.35f);
+    private static readonly Vector2 FlyingObstacleColliderOffset = new Vector2(0f, -0.156f);
+
+    private struct CactusVariant
+    {
+        public string FileName;
+        public float Height; // real visible height in pixels, not the shared padded canvas
+
+        public CactusVariant(string fileName, float height)
+        {
+            FileName = fileName;
+            Height = height;
+        }
+    }
+
+    private static readonly CactusVariant[] CactusVariants =
+    {
+        new CactusVariant("Cactus_Large_Single", 96f),
+        new CactusVariant("Cactus_Large_Double", 96f),
+        new CactusVariant("Cactus_Large_Triple", 96f),
+        new CactusVariant("Cactus_Small_Single", 70f),
+        new CactusVariant("Cactus_Small_Double", 70f),
+        new CactusVariant("Cactus_Small_Triple", 70f),
+    };
+
+    private const float PixelsPerUnit = 90f;
 
     [MenuItem("Tools/Setup/Build Obstacle Prefabs")]
     public static void Build()
@@ -32,26 +56,25 @@ public static class BuildObstaclePrefabs
 
     private static void BuildGroundObstacle()
     {
-        var variants = new[]
+        var sprites = new Sprite[CactusVariants.Length];
+        var heights = new float[CactusVariants.Length];
+        for (int i = 0; i < CactusVariants.Length; i++)
         {
-            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus_medium.png"),
-            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus_tall_a.png"),
-            AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/cactus_tall_b.png"),
-        };
-        foreach (var variant in variants)
-        {
-            if (variant == null)
+            var sprite = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Sprites/Obstacles/{CactusVariants[i].FileName}.png");
+            if (sprite == null)
             {
-                Debug.LogError("VERIFY FAILED: a cactus variant sprite is missing");
+                Debug.LogError($"VERIFY FAILED: missing cactus sprite {CactusVariants[i].FileName}");
                 return;
             }
+            sprites[i] = sprite;
+            heights[i] = CactusVariants[i].Height / PixelsPerUnit;
         }
 
-        var defaultSprite = variants[1];
+        var defaultSprite = sprites[0];
+        float defaultHeight = heights[0];
 
         var go = new GameObject("GroundObstacle");
-        float y = GroundTopY + defaultSprite.bounds.extents.y;
-        go.transform.position = new Vector3(0f, y, 0f);
+        go.transform.position = new Vector3(0f, GroundTopY, 0f);
 
         var spriteRenderer = go.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = defaultSprite;
@@ -59,18 +82,28 @@ public static class BuildObstaclePrefabs
 
         var collider = go.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = defaultSprite.bounds.size;
+        collider.size = new Vector2(defaultSprite.bounds.size.x, defaultHeight);
+        collider.offset = new Vector2(0f, defaultHeight * 0.5f);
 
         var obstacle = go.AddComponent<GroundObstacle>();
         var so = new SerializedObject(obstacle);
         so.FindProperty("spriteRenderer").objectReferenceValue = spriteRenderer;
         so.FindProperty("boxCollider").objectReferenceValue = collider;
+
         var variantsProp = so.FindProperty("variants");
-        variantsProp.arraySize = variants.Length;
-        for (int i = 0; i < variants.Length; i++)
+        variantsProp.arraySize = sprites.Length;
+        for (int i = 0; i < sprites.Length; i++)
         {
-            variantsProp.GetArrayElementAtIndex(i).objectReferenceValue = variants[i];
+            variantsProp.GetArrayElementAtIndex(i).objectReferenceValue = sprites[i];
         }
+
+        var heightsProp = so.FindProperty("variantHeights");
+        heightsProp.arraySize = heights.Length;
+        for (int i = 0; i < heights.Length; i++)
+        {
+            heightsProp.GetArrayElementAtIndex(i).floatValue = heights[i];
+        }
+
         so.ApplyModifiedPropertiesWithoutUndo();
 
         SavePrefabAndDestroy(go, "GroundObstacle");
@@ -78,8 +111,8 @@ public static class BuildObstaclePrefabs
 
     private static void BuildFlyingObstacle()
     {
-        var frameA = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/bird_0.png");
-        var frameB = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/bird_1.png");
+        var frameA = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/Bird_01.png");
+        var frameB = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/Obstacles/Bird_02.png");
         if (frameA == null || frameB == null)
         {
             Debug.LogError("VERIFY FAILED: flying obstacle frames not found");
@@ -123,10 +156,11 @@ public static class BuildObstaclePrefabs
             var obstacle = ground.GetComponent<GroundObstacle>();
             var so = new SerializedObject(obstacle);
             var variantsProp = so.FindProperty("variants");
+            var heightsProp = so.FindProperty("variantHeights");
             Debug.Log($"VERIFY: GroundObstacle pos={ground.transform.position} variantCount={variantsProp.arraySize}");
             for (int i = 0; i < variantsProp.arraySize; i++)
             {
-                Debug.Log($"VERIFY: GroundObstacle variant[{i}]={variantsProp.GetArrayElementAtIndex(i).objectReferenceValue?.name}");
+                Debug.Log($"VERIFY: variant[{i}]={variantsProp.GetArrayElementAtIndex(i).objectReferenceValue?.name} height={heightsProp.GetArrayElementAtIndex(i).floatValue}");
             }
         }
         else
