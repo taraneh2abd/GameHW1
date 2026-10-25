@@ -5,10 +5,11 @@ public static class BuildObstaclePrefabs
 {
     private const string PrefabFolder = "Assets/Prefabs";
     private const float GroundTopY = 0f;
-    // sits just under standing head height: a standing player clips it, a
-    // ducking player (shrunk collider, see PlayerController) passes under
-    private const float FlyingObstacleY = 0.83f;
-    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(0.9f, 0.35f);
+    // bird sprites are tight-cropped to their own silhouette, so center
+    // pivot already matches the visible art with no hidden offset; sits at
+    // standing head height so a standing player clips it but a duck clears
+    private const float FlyingObstacleY = 0.95f;
+    private static readonly Vector2 FlyingObstacleColliderSize = new Vector2(0.9f, 0.3f);
     private static readonly Vector2 FlyingObstacleColliderOffset = Vector2.zero;
 
     private struct CactusVariant
