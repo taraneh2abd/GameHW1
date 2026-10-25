@@ -10,9 +10,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundY;
     [SerializeField] private float jumpSpeed = 9f;
     [SerializeField] private float dashSpeedMultiplier = 6f;
-    [SerializeField] private float dashDuration = 0.45f;
-    [SerializeField] private float dashCooldown = 0.9f;
     [SerializeField] private float dashLungeDistance = 2.5f;
+    [SerializeField] private float dashMoveSpeed = 12f;
     [SerializeField] private Vector2 duckColliderSize = new Vector2(1f, 0.3f);
     [SerializeField] private Vector2 duckColliderOffset = new Vector2(0f, 0.15f);
 
@@ -28,13 +27,12 @@ public class PlayerController : MonoBehaviour
 
     private bool grounded = true;
     private bool duckHeld;
+    private bool dashHeld;
     private float restX;
-    private float dashTimeLeft;
-    private float dashCooldownLeft;
     private bool dead;
 
     public bool IsGrounded => grounded;
-    public bool IsDashing => dashTimeLeft > 0f;
+    public bool IsDashing => dashHeld;
     public bool IsDead => dead;
 
     private void Awake()
@@ -58,7 +56,8 @@ public class PlayerController : MonoBehaviour
         dashAction.Enable();
         duckAction.Enable();
         jumpAction.performed += OnJump;
-        dashAction.performed += OnDash;
+        dashAction.performed += OnDashPerformed;
+        dashAction.canceled += OnDashCanceled;
         duckAction.performed += OnDuckPerformed;
         duckAction.canceled += OnDuckCanceled;
     }
@@ -66,7 +65,8 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         jumpAction.performed -= OnJump;
-        dashAction.performed -= OnDash;
+        dashAction.performed -= OnDashPerformed;
+        dashAction.canceled -= OnDashCanceled;
         duckAction.performed -= OnDuckPerformed;
         duckAction.canceled -= OnDuckCanceled;
         jumpAction.Disable();
@@ -83,14 +83,14 @@ public class PlayerController : MonoBehaviour
         body.linearVelocity = new Vector2(0f, jumpSpeed);
     }
 
-    private void OnDash(InputAction.CallbackContext context)
+    private void OnDashPerformed(InputAction.CallbackContext context)
     {
-        if (dead || dashCooldownLeft > 0f)
-        {
-            return;
-        }
-        dashTimeLeft = dashDuration;
-        dashCooldownLeft = dashCooldown;
+        dashHeld = true;
+    }
+
+    private void OnDashCanceled(InputAction.CallbackContext context)
+    {
+        dashHeld = false;
     }
 
     private void OnDuckPerformed(InputAction.CallbackContext context)
@@ -120,27 +120,11 @@ public class PlayerController : MonoBehaviour
 
     private void TickDash()
     {
-        if (dashTimeLeft > 0f)
-        {
-            dashTimeLeft -= Time.deltaTime;
-            GameSpeed.DashMultiplier = dashSpeedMultiplier;
+        GameSpeed.DashMultiplier = dashHeld ? dashSpeedMultiplier : 1f;
 
-            float elapsed = dashDuration - Mathf.Max(dashTimeLeft, 0f);
-            float t = Mathf.Clamp01(elapsed / dashDuration);
-            float lunge = Mathf.Sin(t * Mathf.PI) * dashLungeDistance;
-            body.position = new Vector2(restX + lunge, body.position.y);
-
-            if (dashTimeLeft <= 0f)
-            {
-                GameSpeed.DashMultiplier = 1f;
-                body.position = new Vector2(restX, body.position.y);
-            }
-        }
-
-        if (dashCooldownLeft > 0f)
-        {
-            dashCooldownLeft -= Time.deltaTime;
-        }
+        float targetX = restX + (dashHeld ? dashLungeDistance : 0f);
+        float newX = Mathf.MoveTowards(body.position.x, targetX, dashMoveSpeed * Time.deltaTime);
+        body.position = new Vector2(newX, body.position.y);
     }
 
     private void TickGroundCheck()
