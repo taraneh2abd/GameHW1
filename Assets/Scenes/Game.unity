@@ -2186,11 +2186,9 @@ MonoBehaviour:
   inputActions: {fileID: -944628639613478452, guid: fbd159b6411b3aa489e985a3a3603efd, type: 3}
   groundY: 0
   jumpSpeed: 9
-  dashSpeedMultiplier: 3
-  dashDuration: 0.25
-  dashCooldown: 0.75
-  dashLungeDistance: 1.6
-  duckScale: 0.5
+  dashSpeedMultiplier: 1.5
+  duckColliderSize: {x: 1, y: 0.3}
+  duckColliderOffset: {x: 0, y: 0.15}
 --- !u!95 &1327920891
 Animator:
   serializedVersion: 7
