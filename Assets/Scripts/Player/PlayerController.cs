@@ -9,9 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionAsset inputActions;
     [SerializeField] private float groundY;
     [SerializeField] private float jumpSpeed = 9f;
-    [SerializeField] private float dashSpeedMultiplier = 6f;
-    [SerializeField] private float dashLungeDistance = 2.5f;
-    [SerializeField] private float dashMoveSpeed = 12f;
+    [SerializeField] private float dashSpeedMultiplier = 1.5f;
     [SerializeField] private Vector2 duckColliderSize = new Vector2(1f, 0.3f);
     [SerializeField] private Vector2 duckColliderOffset = new Vector2(0f, 0.15f);
 
@@ -27,12 +25,9 @@ public class PlayerController : MonoBehaviour
 
     private bool grounded = true;
     private bool duckHeld;
-    private bool dashHeld;
-    private float restX;
     private bool dead;
 
     public bool IsGrounded => grounded;
-    public bool IsDashing => dashHeld;
     public bool IsDead => dead;
 
     private void Awake()
@@ -42,7 +37,6 @@ public class PlayerController : MonoBehaviour
         hitbox = GetComponent<BoxCollider2D>();
         standColliderSize = hitbox.size;
         standColliderOffset = hitbox.offset;
-        restX = body.position.x;
 
         var map = inputActions.FindActionMap("Gameplay");
         jumpAction = map.FindAction("Jump");
@@ -72,6 +66,7 @@ public class PlayerController : MonoBehaviour
         jumpAction.Disable();
         dashAction.Disable();
         duckAction.Disable();
+        GameSpeed.DashMultiplier = 1f;
     }
 
     private void OnJump(InputAction.CallbackContext context)
@@ -85,12 +80,15 @@ public class PlayerController : MonoBehaviour
 
     private void OnDashPerformed(InputAction.CallbackContext context)
     {
-        dashHeld = true;
+        if (!dead)
+        {
+            GameSpeed.DashMultiplier = dashSpeedMultiplier;
+        }
     }
 
     private void OnDashCanceled(InputAction.CallbackContext context)
     {
-        dashHeld = false;
+        GameSpeed.DashMultiplier = 1f;
     }
 
     private void OnDuckPerformed(InputAction.CallbackContext context)
@@ -110,21 +108,11 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        TickDash();
         TickGroundCheck();
         TickDuck();
 
         animator.SetBool("Grounded", grounded);
         animator.speed = GameSpeed.Current / GameSpeed.DefaultBaseSpeed;
-    }
-
-    private void TickDash()
-    {
-        GameSpeed.DashMultiplier = dashHeld ? dashSpeedMultiplier : 1f;
-
-        float targetX = restX + (dashHeld ? dashLungeDistance : 0f);
-        float newX = Mathf.MoveTowards(body.position.x, targetX, dashMoveSpeed * Time.deltaTime);
-        body.position = new Vector2(newX, body.position.y);
     }
 
     private void TickGroundCheck()

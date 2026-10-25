@@ -55,7 +55,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     public void TakeDamage()
     {
-        if (invulnerableTimeLeft > 0f || controller.IsDead || controller.IsDashing)
+        if (invulnerableTimeLeft > 0f || controller.IsDead)
         {
             return;
         }

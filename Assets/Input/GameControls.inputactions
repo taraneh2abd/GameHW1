@@ -72,6 +72,17 @@
                 },
                 {
                     "name": "",
+                    "id": "8c1d3e5f-7a9b-4c2d-8e0f-1a3b5c7d9e1f",
+                    "path": "<Keyboard>/rightShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b4bc5348-b282-429a-be93-6f0b49e143ac",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
