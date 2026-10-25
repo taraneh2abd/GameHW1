@@ -3,22 +3,28 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private InputActionAsset inputActions;
     [SerializeField] private float groundY;
     [SerializeField] private float jumpSpeed = 9f;
-    [SerializeField] private float dashSpeedMultiplier = 4f;
-    [SerializeField] private float dashDuration = 0.35f;
-    [SerializeField] private float dashCooldown = 0.75f;
-    [SerializeField] private float dashLungeDistance = 1.6f;
-    [SerializeField] private float duckScale = 0.5f;
+    [SerializeField] private float dashSpeedMultiplier = 6f;
+    [SerializeField] private float dashDuration = 0.45f;
+    [SerializeField] private float dashCooldown = 0.9f;
+    [SerializeField] private float dashLungeDistance = 2.5f;
+    [SerializeField] private Vector2 duckColliderSize = new Vector2(1f, 0.3f);
+    [SerializeField] private Vector2 duckColliderOffset = new Vector2(0f, 0.15f);
 
     private Rigidbody2D body;
     private Animator animator;
+    private BoxCollider2D hitbox;
     private InputAction jumpAction;
     private InputAction dashAction;
     private InputAction duckAction;
+
+    private Vector2 standColliderSize;
+    private Vector2 standColliderOffset;
 
     private bool grounded = true;
     private bool duckHeld;
@@ -35,6 +41,9 @@ public class PlayerController : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        hitbox = GetComponent<BoxCollider2D>();
+        standColliderSize = hitbox.size;
+        standColliderOffset = hitbox.offset;
         restX = body.position.x;
 
         var map = inputActions.FindActionMap("Gameplay");
@@ -156,7 +165,8 @@ public class PlayerController : MonoBehaviour
     {
         bool ducking = duckHeld && grounded;
         animator.SetBool("Ducking", ducking);
-        transform.localScale = new Vector3(1f, ducking ? duckScale : 1f, 1f);
+        hitbox.size = ducking ? duckColliderSize : standColliderSize;
+        hitbox.offset = ducking ? duckColliderOffset : standColliderOffset;
     }
 
     public void PlayHit()

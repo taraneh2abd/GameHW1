@@ -15,8 +15,9 @@ public static class BuildPlayerAnimator
 
         var runFrames = new[] { LoadSprite("Dino_Run01"), LoadSprite("Dino_Run02") };
         var idleSprite = LoadSprite("Dino_Idle");
+        var duckFrames = new[] { LoadSprite("Dino_Duck01"), LoadSprite("Dino_Duck02") };
 
-        if (System.Array.IndexOf(runFrames, null) >= 0 || idleSprite == null)
+        if (System.Array.IndexOf(runFrames, null) >= 0 || idleSprite == null || System.Array.IndexOf(duckFrames, null) >= 0)
         {
             Debug.LogError("VERIFY FAILED: missing one or more player sprites");
             return;
@@ -26,7 +27,7 @@ public static class BuildPlayerAnimator
         var jumpClip = CreateStaticClip("Jump", idleSprite, 0.2f);
         var hitClip = CreateStaticClip("Hit", runFrames[0], 0.15f);
         var deathClip = CreateStaticClip("Death", idleSprite, 0.2f);
-        var duckClip = CreateStaticClip("Duck", runFrames[1], 0.2f);
+        var duckClip = CreateLoopingClip("Duck", duckFrames, 8f);
 
         if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath) != null)
         {
