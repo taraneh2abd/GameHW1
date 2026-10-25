@@ -10,6 +10,8 @@ public static class ConfigureDinoAssets
         "Assets/Sprites/Player/Dino_Run01.png",
         "Assets/Sprites/Player/Dino_Run02.png",
         "Assets/Sprites/Player/Dino_Idle.png",
+        "Assets/Sprites/Player/Dino_Duck01.png",
+        "Assets/Sprites/Player/Dino_Duck02.png",
         "Assets/Sprites/Obstacles/Cactus_Large_Single.png",
         "Assets/Sprites/Obstacles/Cactus_Large_Double.png",
         "Assets/Sprites/Obstacles/Cactus_Large_Triple.png",
